@@ -51,3 +51,14 @@ curl http://localhost:5555/ --data "hi there :)"
 
 curl http://localhost:5555/battery-level
 ```
+
+## Please note
+
+This is an experimental project, and the code is not production ready. The only implemented OS API is the battery level on macOS only.
+
+## TODO
+
+- [ ] Add more OS APIs
+- [ ] Add more documentation
+- [ ] Add more examples
+- [ ] Add more benchmarks
