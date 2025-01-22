@@ -1,13 +1,13 @@
 # ![ludo logo](<ludo logo.png>)
 
-🕸️ an (experimental) Lua web server runtime aiming at providing native OS APIs, and of course blazingly fast 🚀!
+🕸️ an (experimental) Lua web server runtime aiming at providing native OS APIs
 
 ## Features
 
-- 🚀 Blazingly fast
 - 🌐 Web server
 - 📚 Lua runtime
 - 💻 native OS APIs
+- 🚀 Blazingly fast (duh...)
 
 ## Example usage
 
