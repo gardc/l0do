@@ -1,4 +1,5 @@
 const std = @import("std");
+const builtin = @import("builtin");
 
 // Although this function looks imperative, note that its job is to
 // declaratively construct a build graph that will be executed by an external
@@ -37,6 +38,18 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+
+    // Add macOS-specific configuration
+    if (builtin.target.os.tag == .macos) {
+        exe.linkLibC();
+        exe.linkFramework("Foundation");
+        exe.linkFramework("IOKit");
+
+        exe.addCSourceFile(.{
+            .file = .{ .cwd_relative = "src/platform/macos/battery.m" },
+        });
+    }
+
     // exe.linkLibC();
     // exe.addIncludePath(lua_dep.path("src"));
     // exe.addCSourceFiles(.{
