@@ -1,0 +1,75 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+
+# Add permissions at workflow level
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build All Targets
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v1
+        with:
+          version: 0.13.0
+
+      - name: Build All Targets
+        run: |
+          targets=(
+            "x86_64-macos"
+            "aarch64-macos"
+          )
+          
+          for target in "${targets[@]}"; do
+            echo "Building for $target..."
+            zig build -Dtarget=$target -Doptimize=ReleaseFast
+            
+            # List contents of bin directory
+            ls zig-out/bin
+            
+            # Copy all files (binaries and debug symbols if present)
+            cp zig-out/bin/* ./
+            
+            # Clean zig-out to prepare for next build
+            rm -rf zig-out/
+          done
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries
+          path: ludo-*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: release-${{ github.sha }}
+          release_name: Release ${{ github.sha }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: release-${{ github.sha }}
+          files: ./artifacts/*
+          token: ${{ secrets.GITHUB_TOKEN }} 
