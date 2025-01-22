@@ -153,7 +153,7 @@ pub fn main() !void {
     defer args.deinit();
     _ = args.skip(); // skips the first arg (program name)
     const lua_file = args.next() orelse {
-        std.debug.print("Wrong usage! Usage: l0do <lua_file>\n", .{});
+        std.debug.print("Wrong usage! Usage: ludo <lua_file>\n", .{});
         return;
     };
     // make sure the file exists by trying to find the file
