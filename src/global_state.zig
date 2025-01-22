@@ -58,7 +58,7 @@ test "GlobalState - Lua basic operations" {
     var gs = try GlobalState.init(allocator);
     defer gs.deinit();
 
-    gs.lua.openLibs();
+    gs.lua.openBase();
 
     // Try pushing and retrieving a string
     std.debug.print("Testing string operations...\n", .{});
@@ -67,5 +67,7 @@ test "GlobalState - Lua basic operations" {
 
     // Try running a simple Lua chunk
     std.debug.print("Testing Lua execution...\n", .{});
-    try gs.lua.doString("a = 1 + 1");
+    try gs.lua.doString("return 1 + 1");
+    try std.testing.expect(gs.lua.isNumber(-1));
+    try std.testing.expectEqual(gs.lua.toInteger(-1), 2);
 }
