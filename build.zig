@@ -16,10 +16,16 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     // libs
-    const ziglua = b.dependency("ziglua", .{
+    // const ziglua = b.dependency("ziglua", .{
+    //     .target = target,
+    //     .optimize = optimize,
+    // });
+
+    const lua_dep = b.dependency("lua", .{
         .target = target,
         .optimize = optimize,
     });
+
     const httpz = b.dependency("httpz", .{
         .target = target,
         .optimize = optimize,
@@ -31,7 +37,48 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-    exe.root_module.addImport("ziglua", ziglua.module("ziglua"));
+    exe.linkLibC();
+    exe.addIncludePath(lua_dep.path("src"));
+    exe.addCSourceFiles(.{
+        .root = lua_dep.path("src"),
+        .files = &.{
+            "lapi.c",
+            "lauxlib.c",
+            "lbaselib.c",
+            "lcode.c",
+            "lcorolib.c",
+            "lctype.c",
+            "ldblib.c",
+            "ldebug.c",
+            "ldo.c",
+            "ldump.c",
+            "lfunc.c",
+            "lgc.c",
+            "linit.c",
+            "liolib.c",
+            "llex.c",
+            "lmathlib.c",
+            "lmem.c",
+            "loadlib.c",
+            "lobject.c",
+            "lopcodes.c",
+            "loslib.c",
+            "lparser.c",
+            "lstate.c",
+            "lstring.c",
+            "lstrlib.c",
+            "ltable.c",
+            "ltablib.c",
+            "ltm.c",
+            "lundump.c",
+            "lutf8lib.c",
+            "lvm.c",
+            "lzio.c",
+        },
+        .flags = &.{"-std=c99"},
+    });
+
+    // exe.root_module.addImport("ziglua", ziglua.module("ziglua"));
     exe.root_module.addImport("httpz", httpz.module("httpz"));
 
     // This declares intent for the executable to be installed into the
