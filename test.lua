@@ -1,7 +1,8 @@
+--!strict
 
 route("/", function(req, res)
-    x = "world"
-    return "hello, " .. x
+    local x = "world"
+    return "hello, " .. x .. req
 end)
 
 route("/test", function(req, res)
