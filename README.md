@@ -1,6 +1,6 @@
 # ![ludo logo](<ludo logo.png>)
 
-🕸️ an (experimental) Lua web server runtime aiming at providing native OS APIs
+🕸️ an (experimental) portable, small and fast Lua web server runtime aiming at providing native OS APIs
 
 ## Features
 
@@ -44,7 +44,7 @@ end)
 
 ```
 
-then do `ludo ./test.lua` to run the server. You'll then be able to query the web server at `http://localhost:5555/` and `http://localhost:5555/battery-level`.
+then do `ludo ./example.lua` to run the server. You'll then be able to query the web server at `http://localhost:5555/` and `http://localhost:5555/battery-level`.
 
 ```bash
 curl http://localhost:5555/ --data "hi there :)"
@@ -52,9 +52,18 @@ curl http://localhost:5555/ --data "hi there :)"
 curl http://localhost:5555/battery-level
 ```
 
+should return:
+
+```
+hello, world, you called from /, status: 200, method: POST, protocol: HTTP11, body: hi there :)
+
+
+Battery level: 100.0%
+```
+
 ## Please note
 
-This is an experimental project, and the code is not production ready. The only implemented OS API is the battery level on macOS only.
+This is an experimental project, and currently the only implemented OS API is the battery level on macOS only.
 
 ## TODO
 
@@ -62,3 +71,6 @@ This is an experimental project, and the code is not production ready. The only 
 - [ ] Add more documentation
 - [ ] Add more examples
 - [ ] Add more benchmarks
+- [ ] Add JSON support
+- [ ] Add markdown support
+- [ ] Make it easy to write a personal blog / website
