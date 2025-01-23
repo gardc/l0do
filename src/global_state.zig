@@ -1,6 +1,8 @@
 const std = @import("std");
 const ziglua = @import("ziglua");
 
+pub var gs: GlobalState = undefined;
+
 pub const GlobalState = struct {
     allocator: std.mem.Allocator,
     routes: std.StringHashMap(i32),
@@ -10,9 +12,6 @@ pub const GlobalState = struct {
         const routes = std.StringHashMap(i32).init(allocator);
         var lua = try ziglua.Lua.init(allocator);
         errdefer lua.deinit();
-
-        // lua.openLibs();
-        // lua.openBase();
 
         return GlobalState{
             .allocator = allocator,
@@ -32,8 +31,8 @@ test "GlobalState - basic initialization" {
 
     const allocator = std.testing.allocator;
 
-    var gs = try GlobalState.init(allocator);
-    defer gs.deinit();
+    var testgs = try GlobalState.init(allocator);
+    defer testgs.deinit();
     std.debug.print("Basic initialization successful\n", .{});
 }
 
@@ -42,11 +41,11 @@ test "GlobalState - Lua initialization with libs" {
 
     const allocator = std.testing.allocator;
 
-    var gs = try GlobalState.init(allocator);
-    defer gs.deinit();
+    var testgs = try GlobalState.init(allocator);
+    defer testgs.deinit();
 
     std.debug.print("Opening Lua libraries...\n", .{});
-    gs.lua.openLibs();
+    testgs.lua.openLibs();
     std.debug.print("Libraries opened successfully\n", .{});
 }
 
@@ -55,19 +54,19 @@ test "GlobalState - Lua basic operations" {
 
     const allocator = std.testing.allocator;
 
-    var gs = try GlobalState.init(allocator);
-    defer gs.deinit();
+    var testgs = try GlobalState.init(allocator);
+    defer testgs.deinit();
 
-    gs.lua.openBase();
+    testgs.lua.openBase();
 
     // Try pushing and retrieving a string
     std.debug.print("Testing string operations...\n", .{});
-    _ = gs.lua.pushString("test");
-    try std.testing.expect(gs.lua.isString(-1));
+    _ = testgs.lua.pushString("test");
+    try std.testing.expect(testgs.lua.isString(-1));
 
     // Try running a simple Lua chunk
     std.debug.print("Testing Lua execution...\n", .{});
-    try gs.lua.doString("return 1 + 1");
-    try std.testing.expect(gs.lua.isNumber(-1));
-    try std.testing.expectEqual(gs.lua.toInteger(-1), 2);
+    try testgs.lua.doString("return 1 + 1");
+    try std.testing.expect(testgs.lua.isNumber(-1));
+    try std.testing.expectEqual(testgs.lua.toInteger(-1), 2);
 }
