@@ -41,7 +41,7 @@ pub fn route(lua: *Lua) i32 {
     return 1;
 }
 
-/// handleLuaRoute is the function that gets called when we receive a request.
+/// handleLuaRoute is the function that gets called when we receive a request from httpz.
 /// It then calls the anonymous Lua function that was registered with the route as the second argument to route().
 /// It gives the Lua function access to the request and response objects
 /// like so:

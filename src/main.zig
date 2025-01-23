@@ -26,7 +26,7 @@ pub fn main() !void {
     globalState.gs.lua.setGlobal("route");
     std.debug.print("Lua global route function set...\n", .{});
 
-    // Then load file
+    // check & get filename arg
     std.debug.print("Loading Lua file...\n", .{});
     var args = std.process.argsWithAllocator(allocator) catch |err| {
         std.debug.print("Error getting args: {}\n", .{err});
@@ -35,7 +35,7 @@ pub fn main() !void {
     defer args.deinit();
     _ = args.skip(); // skips the first arg (program name)
     const lua_file = args.next() orelse {
-        std.debug.print("Wrong usage! Usage: ludo <lua_file>\n", .{});
+        std.debug.print("Please provide 1 argument with the lua file to load! Usage: ludo <lua_file>\n", .{});
         return;
     };
     // make sure the file exists by trying to find the file
@@ -44,21 +44,21 @@ pub fn main() !void {
         return;
     };
 
-    // load the lua file
+    // load the lua file in the interpreter
     globalState.gs.lua.doFile(lua_file) catch |err| {
         std.debug.print("Error loading luafile: {}\n", .{err});
         return;
     };
 
-    // setup web server
-    std.debug.print("Setting up web server...\n", .{});
+    // setup http server
+    std.debug.print("Setting up http server...\n", .{});
     var server = try httpz.Server().init(globalState.gs.allocator, .{ .port = 5555 });
     defer server.deinit();
 
     var internal_router = server.router();
     internal_router.all("/*", routing.handleLuaRoute);
 
-    std.debug.print("Starting server...\n", .{});
+    std.debug.print("Starting server on port 5555...\n", .{});
     try server.listen();
 }
 
