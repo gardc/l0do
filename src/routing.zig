@@ -79,7 +79,7 @@ pub fn handleLuaRoute(req: *httpz.Request, res: *httpz.Response) !void {
         globalState.gs.lua.setField(-2, "path");
 
         if (req.body_buffer) |buffer| {
-            const body_str = try globalState.gs.allocator.dupe(u8, buffer.data);
+            const body_str = try res.arena.dupe(u8, buffer.data);
             _ = globalState.gs.lua.pushString(body_str);
         } else {
             _ = globalState.gs.lua.pushString("");
@@ -109,7 +109,7 @@ pub fn handleLuaRoute(req: *httpz.Request, res: *httpz.Response) !void {
 
         // Handle return value (response body)
         const response = try globalState.gs.lua.toString(-1);
-        res.body = try globalState.gs.allocator.dupe(u8, response);
+        res.body = try res.arena.dupe(u8, response);
         globalState.gs.lua.pop(1);
 
         // Get response table back again

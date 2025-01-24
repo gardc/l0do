@@ -15,11 +15,11 @@
 -- !strict
 route("/", function(req, res)
     local x = "world"
-    
+
     -- Create response body
     local response_body = "hello, " .. x .. ", you called from " .. req.path .. ", status: " .. res.status .. ", method: " ..
     req.method .. ", protocol: " .. req.protocol
-    
+
     -- Add body if method is POST
     if req.method == "POST" then
         response_body = response_body .. ", body: " .. req.body
@@ -29,7 +29,7 @@ route("/", function(req, res)
     res.status = 299
 
     return response_body
-    
+
 end)
 
 route("/battery-level", function(req, res)

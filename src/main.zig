@@ -59,6 +59,21 @@ pub fn main() !void {
     internal_router.all("/*", routing.handleLuaRoute);
 
     std.debug.print("Starting server on port 5555...\n", .{});
+
+    // Setup ctrl-c handler
+    const sigaction = std.posix.Sigaction{
+        .handler = .{ .handler = (struct {
+            fn handler(sig: c_int) callconv(.C) void {
+                _ = sig;
+                std.debug.print("\nReceived SIGINT, shutting down...\n", .{});
+                std.process.exit(0);
+            }
+        }).handler },
+        .mask = std.posix.empty_sigset,
+        .flags = 0,
+    };
+    try std.posix.sigaction(std.posix.SIG.INT, &sigaction, null);
+
     try server.listen();
 }
 
